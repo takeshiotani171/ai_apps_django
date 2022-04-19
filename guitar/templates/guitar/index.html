@@ -1,0 +1,43 @@
+{% extends 'guitar/base.html' %}
+{% block title %}画像推定アプリメニュー{% endblock %}
+
+{% block content %}
+<div>
+    <h4 class="mt-4 mb-5 border-bottom">画像推定アプリ</h4>
+    <p>画像ファイルを選択して推定ボタンをクリックしてください。ギターかそれ以外の写真かを推定します。</p>
+    <form action="{% url 'guitar:predict' %}" method="post" class="form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="custom-file">
+                {{ form.image }}
+            <label class="custom-file-label" for="customFile">
+              <div id="file-name">推定したいファイルを選択してください。</div>
+            </label>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">推定する！</button>
+    </form> 
+</div>
+<script>
+    const sizeLimit = 1024 * 1024 * 1; // 制限サイズ
+    const fileInput = document.querySelector(".custom-file-input")
+    
+    const handleFileSelect = () => {
+      const files = fileInput.files;
+      
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].size > sizeLimit) {
+          // ファイルサイズが制限以上
+          alert('ファイルサイズは1MB以下にしてください'); // エラーメッセージを表示
+          fileInput.value = ''; // inputの中身をリセット
+          return; // この時点で処理を終了する
+        }else{
+        const file_name = fileInput.files[0].name
+        document.getElementById("file-name").innerHTML = file_name
+       }
+      }
+    }
+    // フィールドの値が変更された時（≒ファイル選択時）に、handleFileSelectを発火
+    fileInput.addEventListener('change', handleFileSelect);
+    </script>
+{% endblock %}
